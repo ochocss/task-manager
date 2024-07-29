@@ -10,21 +10,6 @@ public class Task {
     private int daysLeft;
     private LocalDate date;
 
-    public Task() {}
-
-    public Task(String type, String subject, String description, LocalDate date) {
-        this.type = type;
-        this.subject = subject;
-        this.description = description;
-        this.date = date;
-
-        daysLeft = date.getDayOfYear() - LocalDate.now().getDayOfYear();
-
-        if (daysLeft < 0) {
-            daysLeft += 365;
-        }
-    }
-
     public String getType() {
         return type;
     }
