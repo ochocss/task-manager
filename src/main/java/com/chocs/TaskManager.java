@@ -16,8 +16,8 @@ import java.util.Scanner;
 
 public class TaskManager {
     private ArrayList<Task> taskArrayList;
-    private Scanner scanner;
-    private Gson gson;
+    private final Scanner scanner;
+    private final Gson gson;
     private final String FILE_PATH = "C:\\Users\\ADM\\IdeaProjects\\task-manager\\tasks.json";
 
     public TaskManager() {
@@ -29,32 +29,41 @@ public class TaskManager {
 
         loadJsonFile();
 
-        waitInput();
+        waitInput(true);
     }
 
-    private void waitInput() {
-        printTaskList();
+    private void waitInput(boolean fromConstructor) {
+        if(!fromConstructor) {
+            scanner.nextLine();
+
+        }
+
         saveJsonFile();
+        printTaskList();
 
         System.out.println("Enter 1 to add task,");
         System.out.println("Enter 2 to delete task,");
         System.out.println("Enter 3 to edit task,");
         System.out.println("Enter 4 to sort tasks,");
         System.out.println("Enter 5 to print task list,");
-        System.out.println("Enter any other to close.");
+        System.out.println("Enter 0 other to close.");
 
         String option = scanner.nextLine();
-        if(option.length() != 1 || !Character.isDigit(option.charAt(0))) {
-            System.exit(0);
+        if(!Character.isDigit(option.charAt(0)) || option.charAt(0) == '\n') {
+            System.out.println("Invalid option. Try again.");
+            waitInput(false);
         }
 
         switch (Integer.parseInt(option)) {
+            case 0: System.exit(0);
             case 1: addTask(); break;
             case 2: deleteTask(); break;
             case 3: editTask(); break;
             case 4: sortTasks(); break;
             case 5: printTaskList(); break;
-            default: System.exit(0);
+            default:
+                System.out.println("Invalid option. Try again.");
+                waitInput(false);
         }
     }
 
@@ -68,7 +77,7 @@ public class TaskManager {
 
         taskArrayList.add(newTask);
 
-        waitInput();
+        waitInput(false);
     }
 
     private void deleteTask() {
@@ -76,7 +85,7 @@ public class TaskManager {
 
         taskArrayList.remove(getTaskArrayIndex());
 
-        waitInput();
+        waitInput(false);
     }
 
     private void editTask() {
@@ -96,7 +105,7 @@ public class TaskManager {
             default: System.out.println("Invalid input. Try again."); editTask();
         }
 
-        waitInput();
+        waitInput(false);
     }
 
     private void setType(Task task) {
@@ -104,7 +113,8 @@ public class TaskManager {
 
         String option = scanner.next();
         if(option.length() != 1 || !Character.isDigit(option.charAt(0))) {
-            System.exit(0);
+            System.out.println("Invalid input. Try again.");
+            setType(task);
         }
 
         switch(Integer.parseInt(option)) {
@@ -115,12 +125,12 @@ public class TaskManager {
     }
 
     private void setSubject(Task task) {
-        System.out.print("\nEnter subject: ");
+        System.out.print("Enter subject: ");
         task.setSubject(scanner.next());
     }
 
     private void setDescription(Task task) {
-        System.out.print("\nEnter description: ");
+        System.out.print("Enter description: ");
         task.setDescription(scanner.next());
     }
 
@@ -153,12 +163,13 @@ public class TaskManager {
             case "type": TaskSortUtils.sortByType(taskArrayList); break;
             case "subject": TaskSortUtils.sortBySubject(taskArrayList); break;
             case "description": TaskSortUtils.sortByDescription(taskArrayList); break;
+            case "daysleft":
             case "days left":
             case "date": TaskSortUtils.sortByDate(taskArrayList); break;
             default: System.out.println("Invalid input. Try again."); sortTasks();
         }
 
-        waitInput();
+        waitInput(false);
     }
 
     private int getTaskArrayIndex() {
@@ -174,6 +185,7 @@ public class TaskManager {
     }
 
     private void printTaskList() {
+        System.out.println("\n");
         for(int i = 0; i < taskArrayList.size(); i++) {
             Task task = taskArrayList.get(i);
             System.out.println(i + ". " + task);
@@ -196,7 +208,6 @@ public class TaskManager {
 
     private void saveJsonFile() {
         String jsonString = gson.toJson(taskArrayList);
-        System.out.println(jsonString);
 
         try (FileWriter writer = new FileWriter(FILE_PATH)) {
             writer.write(jsonString);
