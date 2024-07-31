@@ -193,6 +193,12 @@ public class TaskManager {
         System.out.println("\n");
     }
 
+    private void recalculateDaysLeft() {
+        for(Task task : taskArrayList) {
+            task.calcDaysLeft();
+        }
+    }
+
     private void loadJsonFile() {
         File jsonFile = new File(FILE_PATH);
 
@@ -204,6 +210,8 @@ public class TaskManager {
                 System.out.println("Failed to load tasks from file.");
             }
         }
+
+        recalculateDaysLeft();
     }
 
     private void saveJsonFile() {
