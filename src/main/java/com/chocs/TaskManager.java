@@ -35,7 +35,6 @@ public class TaskManager {
     private void waitInput(boolean fromConstructor) {
         if(!fromConstructor) {
             scanner.nextLine();
-
         }
 
         saveJsonFile();
@@ -60,7 +59,7 @@ public class TaskManager {
             case 2: deleteTask(); break;
             case 3: editTask(); break;
             case 4: sortTasks(); break;
-            case 5: printTaskList(); break;
+            case 5: printTaskList(); waitInput(false); break;
             default:
                 System.out.println("Invalid option. Try again.");
                 waitInput(false);
